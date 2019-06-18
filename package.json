@@ -1,33 +1,44 @@
 {
-  "name": "TODO",
+  "name": "io-functions-express",
   "version": "0.0.1",
-  "description": "TODO",
-  "repository": "https://github.com/teamdigitale/TODO",
+  "description": "Express adapter for Azure Functions",
+  "repository": "https://github.com/teamdigitale/io-functions-express",
   "author": "https://teamdigitale.governo.it",
   "license": "MIT",
+  "files": [
+    "dist/src"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "build:production": "npm run prestart && npm prune --production",
+    "watch": "tsc --w",
+    "prestart": "npm run build && func extensions install",
+    "start:host": "func start",
+    "start": "npm-run-all --parallel start:host watch",
     "postversion": "git push && git push --tags",
     "test": "jest",
     "lint": "tslint --project ."
   },
   "devDependencies": {
+    "@azure/functions": "^1.0.3",
+    "@types/express": "^4.17.0",
     "@types/jest": "^24.0.13",
     "@types/node": "10.14.1",
     "danger": "^8.0.0",
     "danger-plugin-digitalcitizenship": "*",
+    "express": "^4.17.1",
     "italia-tslint-rules": "*",
     "jest": "^24.8.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.12.1",
     "rimraf": "^2.6.2",
     "ts-jest": "^24.0.2",
     "tslint": "^5.1.0",
     "typescript": "^3.5.0"
   },
-  "dependencies": {
-    "fp-ts": "1.12.0",
-    "io-ts": "1.8.5"
+  "peerDependencies": {
+    "express": "^4.16.3"
   },
   "jest": {
     "testEnvironment": "node",

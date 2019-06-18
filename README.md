@@ -1,3 +1,5 @@
-# TODO
+# io-functions-express
 
-Use this template when creating new typescript projects.
+Express adapter for Azure Functions.
+
+Mostly a porting to TypeScript from [azure-function-express](https://github.com/yvele/azure-function-express).
