@@ -63,7 +63,7 @@ export default class IncomingMessage extends EventEmitter {
   constructor(context: Context) {
     super();
 
-    const { req } = context.bindings;
+    const req = context.req || ({} as NonNullable<Context["req"]>);
 
     Object.assign(this, {
       ...req, // Inherit
@@ -73,7 +73,7 @@ export default class IncomingMessage extends EventEmitter {
       headers: req.headers || {}, // Should always have a headers object
       resume: NOOP,
       socket: { destroy: NOOP },
-      url: req.originalUrl
+      url: (req as any).originalUrl
     });
   }
 }
