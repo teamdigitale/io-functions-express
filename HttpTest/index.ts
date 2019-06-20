@@ -1,11 +1,9 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-
 import * as express from "express";
 import createAzureFunctionHandler from "../src/createAzureFunctionsHandler";
 
 const app = express();
 
-app.get("/api/HttpTest/ping", (req, res) => {
+app.get("/api/HttpTest/ping", (_, res) => {
   res.send("PONG");
 });
 

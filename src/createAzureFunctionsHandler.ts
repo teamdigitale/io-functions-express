@@ -1,7 +1,7 @@
 import { Context } from "@azure/functions";
 import { Application } from "express";
 
-import ExpressAdapter, { RequestListener } from "./ExpressAdapter";
+import ExpressAdapter from "./ExpressAdapter";
 
 /**
  * Creates a function ready to be exposed to Azure Function for request handling.
