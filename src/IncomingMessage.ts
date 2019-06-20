@@ -73,6 +73,7 @@ export default class IncomingMessage extends EventEmitter {
       headers: req.headers || {}, // Should always have a headers object
       resume: NOOP,
       socket: { destroy: NOOP },
+      // tslint:disable-next-line: no-any
       url: (req as any).originalUrl
     });
   }

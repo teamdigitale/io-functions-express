@@ -42,8 +42,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
   // See https://github.com/expressjs/express/blob/master/lib/middleware/init.js#L29
   public end: NativeOutgoingMessage["end"] = (
     // tslint:disable-next-line: no-any
-    chunkOrCb?: any,
-    encodingOrCb?: string | (() => void)
+    chunkOrCb?: any
   ) => {
     // 1. Write head
     this.writeHead(this.statusCode); // Make jshttp/on-headers able to trigger
