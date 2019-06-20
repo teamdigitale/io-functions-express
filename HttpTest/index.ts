@@ -4,32 +4,42 @@ import * as express from "express";
 import createAzureFunctionHandler from "../src/createAzureFunctionsHandler";
 
 const app = express();
-app.get("/api/HttpTest/:foo", (req, res) => {
+
+app.get("/api/HttpTest/ping", (req, res) => {
+  res.send("PONG");
+});
+
+app.get("/api/HttpTest/path/:foo", (req, res) => {
   res.json({
     foo: req.params.foo
   });
 });
 
+app.get("/api/HttpTest/get", (req, res) => {
+  res.json({
+    query: req.query
+  });
+});
+
+app.post("/api/HttpTest/post", (req, res) => {
+  res.json({
+    body: req.body,
+    query: req.query
+  });
+});
+
+app.get("/api/HttpTest/status", (req, res) => {
+  res.status(req.query.status).json({
+    status: req.query.status
+  });
+});
+
+app.get("/api/HttpTest/headers", (req, res) => {
+  res.header("x-custom-header-out", "value").json({
+    headers: req.headers
+  });
+});
+
 const httpTrigger = createAzureFunctionHandler(app);
-
-// const httpTrigger: AzureFunction = async (
-//   context: Context,
-//   req: HttpRequest
-// ): Promise<void> => {
-//   context.log("HTTP trigger function processed a request.");
-//   const name = req.query.name || (req.body && req.body.name);
-
-//   if (name) {
-//     context.res = {
-//       // status: 200, /* Defaults to 200 */
-//       body: "Hello " + (req.query.name || req.body.name)
-//     };
-//   } else {
-//     context.res = {
-//       status: 400,
-//       body: "Please pass a name on the query string or in the request body"
-//     };
-//   }
-// };
 
 export default httpTrigger;
