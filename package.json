@@ -40,7 +40,7 @@
     "typescript": "^3.5.0"
   },
   "peerDependencies": {
-    "express": "^4.16.3"
+    "express": "^4.0.0"
   },
   "jest": {
     "testEnvironment": "node",
