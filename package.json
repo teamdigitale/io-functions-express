@@ -1,6 +1,6 @@
 {
   "name": "io-functions-express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Express adapter for Azure Functions",
   "repository": "https://github.com/teamdigitale/io-functions-express",
   "author": "https://teamdigitale.governo.it",
