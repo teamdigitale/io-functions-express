@@ -132,7 +132,7 @@ describe("Azure functions handler", () => {
     );
     expect(result.status).toEqual(200);
     expect(result.data).toMatchObject({
-      contentType: "application/x-www-form-urlencoded"
+      body: "body=foobar"
     });
   });
 });
