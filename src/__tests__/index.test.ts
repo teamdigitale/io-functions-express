@@ -1,11 +1,19 @@
 import axios from "axios";
 import { ChildProcess, spawn } from "child_process";
+import * as qs from "querystring";
 
+// do not convert to default import despite vscode hints :-)
+import * as treeKill from "tree-kill";
+
+// tslint:disable-next-line: no-let
 let spawnedFunc: ChildProcess;
+// tslint:disable-next-line: no-let
 let funcAddress: string;
+// tslint:disable-next-line: no-let
 let isStopping = false;
 
 // do not reject promise on non-200 statuses
+// tslint:disable-next-line: no-object-mutation
 axios.defaults.validateStatus = () => true;
 
 const startFunc = () =>
@@ -14,6 +22,7 @@ const startFunc = () =>
     const func = spawn("func", ["start"]);
     func.stdout.on("data", data => {
       if (!isStopping) {
+        // tslint:disable-next-line: no-console
         console.log(`${data}`);
       }
       const matches = String(data).match(/Now listening on: ([^\s]+)/);
@@ -28,7 +37,7 @@ const startFunc = () =>
 
 const stopFunc = (p: ChildProcess) => {
   isStopping = true;
-  p.kill();
+  treeKill(p.pid);
 };
 
 beforeAll(done => {
@@ -106,6 +115,24 @@ describe("Azure functions handler", () => {
     });
     expect(result.headers).toMatchObject({
       "x-custom-header-out": "value"
+    });
+  });
+
+  it("should parse urlencoded request", async () => {
+    const result = await axios.post(
+      `${funcAddress}/api/HttpTest/encoded`,
+      qs.stringify({
+        body: "foobar"
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      }
+    );
+    expect(result.status).toEqual(200);
+    expect(result.data).toMatchObject({
+      body: "body=foobar"
     });
   });
 });

@@ -1,6 +1,6 @@
 import { Context } from "@azure/functions";
-import EventEmitter = require("events");
 import { Socket } from "net";
+import { Readable } from "stream";
 import { TLSSocket } from "tls";
 
 const NOOP = () => true;
@@ -54,9 +54,11 @@ function sanitizeContext(context: Context): Context {
 /**
  * Request object wrapper
  *
+ * see also https://github.com/yvele/azure-function-express/pull/31
+ *
  * @private
  */
-export default class IncomingMessage extends EventEmitter {
+export default class IncomingMessage extends Readable {
   /**
    * Note: IncomingMessage assumes that all HTTP in is binded to "req" property
    */
@@ -65,13 +67,17 @@ export default class IncomingMessage extends EventEmitter {
 
     const req = context.req || ({} as NonNullable<Context["req"]>);
 
+    // Push the request body onto this stream
+    this.push(context.bindings.req.rawBody);
+
+    // Close the stream
+    this.push(null);
+
     Object.assign(this, {
       ...req, // Inherit
-      _readableState: { pipesCount: 0 }, // To make unpipe happy
       connection: createConnectionObject(context),
       context: sanitizeContext(context), // Specific to Azure Function
       headers: req.headers || {}, // Should always have a headers object
-      resume: NOOP,
       socket: { destroy: NOOP },
       // tslint:disable-next-line: no-any
       url: (req as any).originalUrl

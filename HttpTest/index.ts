@@ -38,6 +38,12 @@ app.get("/api/HttpTest/headers", (req, res) => {
   });
 });
 
+app.post("/api/HttpTest/encoded", (req, res) => {
+  res.json({
+    body: req.body
+  });
+});
+
 const httpTrigger = createAzureFunctionHandler(app);
 
 export default httpTrigger;
