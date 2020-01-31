@@ -28,7 +28,7 @@
     "@types/jest": "^24.0.13",
     "@types/node": "10.14.1",
     "axios": "^0.19.0",
-    "danger": "^8.0.0",
+    "danger": "^9.2.0",
     "danger-plugin-digitalcitizenship": "*",
     "express": "^4.17.1",
     "italia-tslint-rules": "*",
