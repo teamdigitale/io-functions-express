@@ -25,8 +25,10 @@ const startFunc = () =>
         // tslint:disable-next-line: no-console
         console.log(`${data}`);
       }
-      const matches = String(data).match(/Now listening on: ([^\s]+)/);
+      const matches = String(data).match(/(http:\/\/[^{]+)/);
       if (matches && matches[1]) {
+        // tslint:disable-next-line: no-console
+        console.log("serving function at %s", matches[1]);
         res({
           address: matches[1],
           p: func
@@ -50,25 +52,23 @@ beforeAll(done => {
     .catch(_ => 0);
 });
 
-afterAll(() => stopFunc(spawnedFunc));
+afterAll(() => spawnedFunc && stopFunc(spawnedFunc));
 
 describe("Azure functions handler", () => {
   it("should handle a simple GET request", async () => {
-    const result = await axios.get(`${funcAddress}/api/HttpTest/ping`);
+    const result = await axios.get(`${funcAddress}HttpTest/ping`);
     expect(result.status).toEqual(200);
     expect(result.data).toEqual("PONG");
   });
 
   it("should parse path params", async () => {
-    const result = await axios.get(`${funcAddress}/api/HttpTest/path/foo`);
+    const result = await axios.get(`${funcAddress}HttpTest/path/foo`);
     expect(result.status).toEqual(200);
     expect(result.data).toEqual({ foo: "foo" });
   });
 
   it("should parse params of GET request", async () => {
-    const result = await axios.get(
-      `${funcAddress}/api/HttpTest/get?param1=param1`
-    );
+    const result = await axios.get(`${funcAddress}HttpTest/get?param1=param1`);
     expect(result.status).toEqual(200);
     expect(result.data).toEqual({
       query: { param1: "param1" }
@@ -77,7 +77,7 @@ describe("Azure functions handler", () => {
 
   it("should parse params of POST request", async () => {
     const result = await axios.post(
-      `${funcAddress}/api/HttpTest/post?param1=param1`,
+      `${funcAddress}HttpTest/post?param1=param1`,
       {
         data: "data"
       }
@@ -90,21 +90,17 @@ describe("Azure functions handler", () => {
   });
 
   it("should handle 404 status", async () => {
-    const result = await axios.get(
-      `${funcAddress}/api/HttpTest/status?status=404`
-    );
+    const result = await axios.get(`${funcAddress}HttpTest/status?status=404`);
     expect(result.status).toEqual(404);
   });
 
   it("should handle 500 status", async () => {
-    const result = await axios.get(
-      `${funcAddress}/api/HttpTest/status?status=500`
-    );
+    const result = await axios.get(`${funcAddress}HttpTest/status?status=500`);
     expect(result.status).toEqual(500);
   });
 
   it("should parse and respond with custom headers", async () => {
-    const result = await axios.get(`${funcAddress}/api/HttpTest/headers`, {
+    const result = await axios.get(`${funcAddress}HttpTest/headers`, {
       headers: {
         "x-custom-header-in": "value"
       }
@@ -120,7 +116,7 @@ describe("Azure functions handler", () => {
 
   it("should parse urlencoded request", async () => {
     const result = await axios.post(
-      `${funcAddress}/api/HttpTest/encoded`,
+      `${funcAddress}HttpTest/encoded`,
       qs.stringify({
         body: "foobar"
       }),
