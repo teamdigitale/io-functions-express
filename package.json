@@ -1,6 +1,6 @@
 {
   "name": "io-functions-express",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Express adapter for Azure Functions",
   "repository": "https://github.com/pagopa/io-functions-express",
   "author": "https://pagopa.gov.it",
