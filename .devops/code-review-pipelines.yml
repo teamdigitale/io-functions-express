@@ -26,7 +26,7 @@ stages:
       - job: make_build
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
-          - script: |
+          - bash: |
               yarn build
             displayName: 'Build'
 
@@ -37,7 +37,7 @@ stages:
       - job: lint
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
-          - script: |
+          - bash: |
               yarn lint
             displayName: 'Lint'
 
@@ -61,7 +61,7 @@ stages:
       - job: unit_tests
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
-          - script: |
+          - bash: |
               yarn test
             displayName: 'Unit tests exec'
 
