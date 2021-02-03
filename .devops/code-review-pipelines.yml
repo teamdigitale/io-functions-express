@@ -62,7 +62,11 @@ stages:
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
           - bash: |
-              yarn test --testTimeout=20000
+              npm i -g azure-functions-core-tools@3 --unsafe-perm true
+            displayName: 'Unit tests exec'
+
+          - bash: |
+              yarn test
             displayName: 'Unit tests exec'
 
           - bash: |
