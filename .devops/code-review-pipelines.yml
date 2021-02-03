@@ -59,12 +59,10 @@ stages:
     dependsOn: []
     jobs:
       - job: unit_tests
-        pool:
-          vmImage: 'windows-2019'
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
           - bash: |
-              yarn test
+              yarn test --testTimeout=20000
             displayName: 'Unit tests exec'
 
           - bash: |
