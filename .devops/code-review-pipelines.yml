@@ -59,6 +59,8 @@ stages:
     dependsOn: []
     jobs:
       - job: unit_tests
+        pool:
+          vmImage: 'windows-2019'
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
           - bash: |
