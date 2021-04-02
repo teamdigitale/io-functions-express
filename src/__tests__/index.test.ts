@@ -5,29 +5,29 @@ import * as qs from "querystring";
 // do not convert to default import despite vscode hints :-)
 import * as treeKill from "tree-kill";
 
-// tslint:disable-next-line: no-let
+// eslint-disable-next-line functional/no-let
 let spawnedFunc: ChildProcess;
-// tslint:disable-next-line: no-let
+// eslint-disable-next-line functional/no-let
 let funcAddress: string;
-// tslint:disable-next-line: no-let
+// eslint-disable-next-line functional/no-let
 let isStopping = false;
 
 // do not reject promise on non-200 statuses
-// tslint:disable-next-line: no-object-mutation
+// eslint-disable-next-line functional/immutable-data
 axios.defaults.validateStatus = () => true;
 
 const startFunc = () =>
-  // tslint:disable-next-line: promise-must-complete
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   new Promise<{ p: ChildProcess; address: string }>(res => {
     const func = spawn("func", ["start"]);
     func.stdout.on("data", data => {
       if (!isStopping) {
-        // tslint:disable-next-line: no-console
+        // eslint-disable-next-line no-console
         console.log(`${data}`);
       }
       const matches = String(data).match(/(http:\/\/[^{]+)/);
       if (matches && matches[1]) {
-        // tslint:disable-next-line: no-console
+        // eslint-disable-next-line no-console
         console.log("serving function at %s", matches[1]);
         res({
           address: matches[1],

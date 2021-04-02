@@ -1,4 +1,4 @@
-// tslint:disable: variable-name
+// eslint-disable camelcase
 
 import { Context } from "@azure/functions";
 import {
@@ -41,7 +41,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
   // Those methods cannot be prototyped because express explicitelly overrides __proto__
   // See https://github.com/expressjs/express/blob/master/lib/middleware/init.js#L29
   public end: NativeOutgoingMessage["end"] = (
-    // tslint:disable-next-line: no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     chunkOrCb?: any
   ) => {
     // 1. Write head
@@ -72,7 +72,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     }
 
     // 2. Status message
-    // tslint:disable-next-line: no-object-mutation
+    // eslint-disable-next-line functional/immutable-data
     this.statusMessage =
       typeof reasonOrHeaders === "string"
         ? reasonOrHeaders
@@ -102,7 +102,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
       // we want to never have undefined headers, but instead empty object
       headers:
         this._headers && headers === undefined
-          ? // tslint:disable-next-line: no-any
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this as any)._renderHeaders()
           : headers !== undefined
           ? headers

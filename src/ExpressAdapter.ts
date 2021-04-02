@@ -10,7 +10,7 @@ import OutgoingMessage from "./OutgoingMessage";
  * @throws {Error}
  * @private
  */
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isValidContext = (context: any): context is Context =>
   context !== undefined &&
   typeof context === "object" &&
@@ -63,7 +63,7 @@ export default class ExpressAdapter extends EventEmitter {
         prev: NonNullable<Context["res"]>
       ) => NonNullable<Context["res"]>
     ) => {
-      // tslint:disable-next-line: no-object-mutation
+      // eslint-disable-next-line functional/immutable-data
       context.res = updater(context.res || {});
     };
 

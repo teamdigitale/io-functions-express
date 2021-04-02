@@ -79,7 +79,7 @@ export default class IncomingMessage extends Readable {
       context: sanitizeContext(context), // Specific to Azure Function
       headers: req.headers || {}, // Should always have a headers object
       socket: { destroy: NOOP },
-      // tslint:disable-next-line: no-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       url: (req as any).originalUrl
     });
   }
