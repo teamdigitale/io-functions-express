@@ -1,5 +1,5 @@
-import { Context } from "@azure/functions";
 import EventEmitter = require("events");
+import { Context } from "@azure/functions";
 import { Application } from "express";
 
 import IncomingMessage from "./IncomingMessage";
@@ -21,7 +21,7 @@ const isValidContext = (context: any): context is Context =>
   context.bindings.req.originalUrl &&
   typeof context.bindings.req.originalUrl === "string";
 
-export type RequestListener = (...args: readonly unknown[]) => void;
+export type RequestListener = (...args: ReadonlyArray<unknown>) => void;
 
 /**
  * Express adapter allowing to handle Azure Function requests by wrapping in request events.
@@ -33,7 +33,7 @@ export default class ExpressAdapter extends EventEmitter {
   /**
    * @param {Object=} application Request listener (typically an express/connect instance)
    */
-  public constructor(application: Application) {
+  constructor(application: Application) {
     super();
 
     if (application !== undefined) {
@@ -53,25 +53,27 @@ export default class ExpressAdapter extends EventEmitter {
   /**
    * Create function ready to be exposed to Azure Function for request handling.
    */
-  public createAzureFunctionHandler = () => (context: Context) => {
-    if (!isValidContext(context)) {
-      return;
-    }
+  public createAzureFunctionHandler() {
+    return (context: Context): void => {
+      if (!isValidContext(context)) {
+        return;
+      }
 
-    const updateResponse = (
-      updater: (
-        prev: NonNullable<Context["res"]>
-      ) => NonNullable<Context["res"]>
-    ) => {
-      // eslint-disable-next-line functional/immutable-data
-      context.res = updater(context.res || {});
+      const updateResponse = (
+        updater: (
+          prev: NonNullable<Context["res"]>
+        ) => NonNullable<Context["res"]>
+      ): void => {
+        // eslint-disable-next-line functional/immutable-data
+        context.res = updater(context.res || {});
+      };
+
+      // 2. Wrapping
+      const req = new IncomingMessage(context);
+      const res = new OutgoingMessage(updateResponse, context.done);
+
+      // 3. Synchronously calls each of the listeners registered for the event
+      this.emit("request", req, res);
     };
-
-    // 2. Wrapping
-    const req = new IncomingMessage(context);
-    const res = new OutgoingMessage(updateResponse, context.done);
-
-    // 3. Synchronously calls each of the listeners registered for the event
-    this.emit("request", req, res);
-  };
+  }
 }

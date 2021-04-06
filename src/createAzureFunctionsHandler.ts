@@ -9,9 +9,11 @@ import ExpressAdapter from "./ExpressAdapter";
  * @param {Object} requestListener Request listener (typically an express/connect instance)
  * @returns {function(context: Object)} Azure Function handle
  */
-export default function createAzureFunctionHandler(
+const createAzureFunctionHandler = (
   application: Application
-): (context: Context) => void {
+): ((context: Context) => void) => {
   const adapter = new ExpressAdapter(application);
   return adapter.createAzureFunctionHandler();
-}
+};
+
+export default createAzureFunctionHandler;
