@@ -1,4 +1,4 @@
-export const statusCodes: { [key: number]: string | undefined } = {
+export const statusCodes: { readonly [key: number]: string | undefined } = {
   100: "Continue",
   101: "Switching Protocols",
   102: "Processing", // RFC 2518, obsoleted by RFC 4918
