@@ -1,11 +1,11 @@
-// tslint:disable: variable-name
+// eslint-disable camelcase
 
-import { Context } from "@azure/functions";
 import {
   OutgoingHttpHeaders,
   OutgoingMessage as NativeOutgoingMessage,
   ServerResponse
 } from "http";
+import { Context } from "@azure/functions";
 
 import { statusCodes } from "./statusCodes";
 
@@ -17,12 +17,13 @@ import { statusCodes } from "./statusCodes";
  * @private
  */
 export default class OutgoingMessage extends NativeOutgoingMessage {
-  public _hasBody = true;
-  public _headerNames = {};
-  public _headers = null;
-  public _removedHeader = {};
+  public readonly _hasBody = true;
+  public readonly _headerNames = {};
+  public readonly _headers = null;
+  public readonly _removedHeader = {};
+  // eslint-disable-next-line functional/prefer-readonly-type
   public statusMessage!: string;
-  public statusCode!: number;
+  public readonly statusCode!: number;
 
   /**
    * Original implementation: https://github.com/nodejs/node/blob/v6.x/lib/_http_outgoing.js#L48
@@ -40,19 +41,21 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
 
   // Those methods cannot be prototyped because express explicitelly overrides __proto__
   // See https://github.com/expressjs/express/blob/master/lib/middleware/init.js#L29
-  public end: NativeOutgoingMessage["end"] = (
-    // tslint:disable-next-line: no-any
-    chunkOrCb?: any
+  public readonly end: NativeOutgoingMessage["end"] = (
+    chunkOrCb: Parameters<NativeOutgoingMessage["end"]>[0]
   ) => {
     // 1. Write head
+    // eslint-disable-next-line no-invalid-this
     this.writeHead(this.statusCode); // Make jshttp/on-headers able to trigger
 
     // 2. Return raw body to Azure Function runtime
+    // eslint-disable-next-line no-invalid-this
     this.updateResponse(res => ({
       ...res,
       body: chunkOrCb,
       isRaw: true
     }));
+    // eslint-disable-next-line no-invalid-this
     this.done();
   };
 
@@ -60,7 +63,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
    * https://nodejs.org/api/http.html#http_response_writehead_statuscode_statusmessage_headers
    * Original implementation: https://github.com/nodejs/node/blob/v6.x/lib/_http_server.js#L160
    */
-  public writeHead: ServerResponse["writeHead"] = (
+  public readonly writeHead: ServerResponse["writeHead"] = (
     statusCode: number,
     reasonOrHeaders?: string | OutgoingHttpHeaders,
     headersOrUndefined?: OutgoingHttpHeaders
@@ -72,7 +75,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     }
 
     // 2. Status message
-    // tslint:disable-next-line: no-object-mutation
+    // eslint-disable-next-line functional/immutable-data, no-invalid-this
     this.statusMessage =
       typeof reasonOrHeaders === "string"
         ? reasonOrHeaders
@@ -85,24 +88,28 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
         ? reasonOrHeaders
         : headersOrUndefined;
 
+    // eslint-disable-next-line no-underscore-dangle, no-invalid-this
     if (this._headers && headers !== undefined) {
       // Slow-case: when progressive API and header fields are passed.
       Object.keys(headers).forEach(k => {
         const v = headers[k];
         if (v) {
+          // eslint-disable-next-line no-invalid-this
           this.setHeader(k, v);
         }
       });
     }
 
     // 4. Sets everything
+    // eslint-disable-next-line no-invalid-this
     this.updateResponse(res => ({
       ...res,
       // In order to uniformize node 6 behaviour with node 8 and 10,
       // we want to never have undefined headers, but instead empty object
       headers:
+        // eslint-disable-next-line no-underscore-dangle, no-invalid-this
         this._headers && headers === undefined
-          ? // tslint:disable-next-line: no-any
+          ? // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-explicit-any, no-invalid-this
             (this as any)._renderHeaders()
           : headers !== undefined
           ? headers

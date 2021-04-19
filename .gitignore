@@ -6,3 +6,7 @@ coverage
 .vscode
 obj
 bin
+
+# eslint section
+!.eslintrc.js
+.eslintcache
