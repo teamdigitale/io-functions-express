@@ -41,7 +41,7 @@
     "rimraf": "^2.6.2",
     "tree-kill": "^1.2.2",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.0"
+    "typescript": "^4.3.5"
   },
   "peerDependencies": {
     "express": "^4.17.2"
