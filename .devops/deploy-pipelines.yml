@@ -8,10 +8,6 @@
 # NPM_CONNECTION    - name of the NPM service connection used to publish the package; be sure that the related user has appopriate right
 # 
 
-variables:
-  NODE_VERSION: '10.14.1'
-  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-
 parameters:
   - name: 'RELEASE_SEMVER'
     displayName: 'When packing a release, define the version bump to apply'
@@ -34,8 +30,8 @@ resources:
     - repository: pagopaCommons
       type: github
       name: pagopa/azure-pipeline-templates
-      ref: refs/tags/v8
-      endpoint: 'pagopa'
+      ref: refs/tags/v15
+      endpoint: 'io-azure-devops-github-ro'
 
 stages:
 
