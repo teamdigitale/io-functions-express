@@ -1,4 +1,4 @@
-// eslint-disable camelcase
+/* eslint-disable camelcase, sonarjs/cognitive-complexity */
 
 import {
   OutgoingHttpHeader,
@@ -42,6 +42,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
 
   // Those methods cannot be prototyped because express explicitelly overrides __proto__
   // See https://github.com/expressjs/express/blob/master/lib/middleware/init.js#L29
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   public readonly end = (
     chunkOrCb: Parameters<NativeOutgoingMessage["end"]>[0]
   ) => {
@@ -59,6 +60,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     // eslint-disable-next-line no-invalid-this
     this.done();
 
+    // eslint-disable-next-line no-invalid-this
     return this;
   };
 
@@ -74,7 +76,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     // eslint-disable-next-line functional/prefer-readonly-type
     reasonOrHeaders?: string | OutgoingHttpHeaders | OutgoingHttpHeader[],
     // eslint-disable-next-line functional/prefer-readonly-type
-    headersOrUndefined?: OutgoingHttpHeaders | OutgoingHttpHeader[]
+    headersOrUndefined?: OutgoingHttpHeaders | ReadonlyArray<OutgoingHttpHeader>
   ) => {
     // 1. Status code
     const statusCodeOrDefault = statusCode || 0;
