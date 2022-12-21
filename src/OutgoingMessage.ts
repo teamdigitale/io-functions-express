@@ -1,6 +1,7 @@
 // eslint-disable camelcase
 
 import {
+  OutgoingHttpHeader,
   OutgoingHttpHeaders,
   OutgoingMessage as NativeOutgoingMessage,
   ServerResponse
@@ -41,7 +42,7 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
 
   // Those methods cannot be prototyped because express explicitelly overrides __proto__
   // See https://github.com/expressjs/express/blob/master/lib/middleware/init.js#L29
-  public readonly end: NativeOutgoingMessage["end"] = (
+  public readonly end = (
     chunkOrCb: Parameters<NativeOutgoingMessage["end"]>[0]
   ) => {
     // 1. Write head
@@ -57,16 +58,23 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     }));
     // eslint-disable-next-line no-invalid-this
     this.done();
+
+    return this;
   };
 
   /**
    * https://nodejs.org/api/http.html#http_response_writehead_statuscode_statusmessage_headers
    * Original implementation: https://github.com/nodejs/node/blob/v6.x/lib/_http_server.js#L160
    */
-  public readonly writeHead: ServerResponse["writeHead"] = (
+
+  public readonly writeHead: (
+    ...args: Parameters<ServerResponse["writeHead"]>
+  ) => void = (
     statusCode: number,
-    reasonOrHeaders?: string | OutgoingHttpHeaders,
-    headersOrUndefined?: OutgoingHttpHeaders
+    // eslint-disable-next-line functional/prefer-readonly-type
+    reasonOrHeaders?: string | OutgoingHttpHeaders | OutgoingHttpHeader[],
+    // eslint-disable-next-line functional/prefer-readonly-type
+    headersOrUndefined?: OutgoingHttpHeaders | OutgoingHttpHeader[]
   ) => {
     // 1. Status code
     const statusCodeOrDefault = statusCode || 0;
@@ -91,8 +99,8 @@ export default class OutgoingMessage extends NativeOutgoingMessage {
     // eslint-disable-next-line no-underscore-dangle, no-invalid-this
     if (this._headers && headers !== undefined) {
       // Slow-case: when progressive API and header fields are passed.
-      Object.keys(headers).forEach(k => {
-        const v = headers[k];
+      Object.keys(headers).forEach((k, i) => {
+        const v = headers instanceof Array ? headers[i] : headers[k];
         if (v) {
           // eslint-disable-next-line no-invalid-this
           this.setHeader(k, v);
