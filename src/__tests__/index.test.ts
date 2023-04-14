@@ -39,7 +39,7 @@ const startFunc = () =>
 
 const stopFunc = (p: ChildProcess) => {
   isStopping = true;
-  treeKill(p.pid);
+  treeKill(p.pid as number);
 };
 
 beforeAll(done => {
