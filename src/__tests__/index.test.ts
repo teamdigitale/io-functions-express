@@ -42,19 +42,20 @@ const stopFunc = (p: ChildProcess) => {
   treeKill(p.pid as number);
 };
 
-beforeAll(done => {
-  startFunc()
-    .then(({ p, address }) => {
-      spawnedFunc = p;
-      funcAddress = address;
-      done();
-    })
-    .catch(_ => 0);
-});
-
-afterAll(() => spawnedFunc && stopFunc(spawnedFunc));
 
 describe("Azure functions handler", () => {
+  beforeAll(done => {
+    startFunc()
+      .then(({ p, address }) => {
+        spawnedFunc = p;
+        funcAddress = address;
+        done();
+      })
+      .catch(_ => 0);
+  });
+  
+  afterAll(() => spawnedFunc && stopFunc(spawnedFunc));
+  
   it("should handle a simple GET request", async () => {
     const result = await axios.get(`${funcAddress}HttpTest/ping`);
     expect(result.status).toEqual(200);
