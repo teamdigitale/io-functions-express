@@ -40,8 +40,11 @@ const startFunc = () =>
 const stopFunc = (p: ChildProcess) => {
   console.log(`Stopping functions ${p.pid}...`);
   isStopping = true;
-  // we call John Wick to kill hanging processes
-  exec(`ps -ef | grep "[f]unc start" | awk '{print $2}' | xargs -I{} kill -9 {}`);
+  // it seems like treeKill and p.kill() can no longer stop the functions process because only the father process gets killed, so the functions still remain up causing jest to hang up at the end,
+  // this is a workaround to kill all the process and make jest exit correctly
+  exec(
+    `ps -ef | grep "[f]unc start" | awk '{print $2}' | xargs -I{} kill -9 {}`
+  );
 };
 
 beforeAll(done => {
