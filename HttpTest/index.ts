@@ -27,7 +27,7 @@ app.post("/api/HttpTest/post", (req, res) => {
 });
 
 app.get("/api/HttpTest/status", (req, res) => {
-  res.status(req.query.status).json({
+  res.status(Number(req.query.status)).json({
     status: req.query.status
   });
 });

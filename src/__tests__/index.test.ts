@@ -1,6 +1,6 @@
-import axios from "axios";
-import { ChildProcess, spawn } from "child_process";
+import { ChildProcess, spawn, exec } from "child_process";
 import * as qs from "querystring";
+import axios from "axios";
 
 // do not convert to default import despite vscode hints :-)
 import * as treeKill from "tree-kill";
@@ -19,7 +19,7 @@ axios.defaults.validateStatus = () => true;
 const startFunc = () =>
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   new Promise<{ p: ChildProcess; address: string }>(res => {
-    const func = spawn("func", ["start"]);
+    const func = spawn("func", ["start"], { detached: true });
     func.stdout.on("data", data => {
       if (!isStopping) {
         // eslint-disable-next-line no-console
@@ -30,7 +30,7 @@ const startFunc = () =>
         // eslint-disable-next-line no-console
         console.log("serving function at %s", matches[1]);
         res({
-          address: matches[1],
+          address: matches[1].replace("localhost", "127.0.0.1"),
           p: func
         });
       }
@@ -38,8 +38,13 @@ const startFunc = () =>
   });
 
 const stopFunc = (p: ChildProcess) => {
+  console.log(`Stopping functions ${p.pid}...`);
   isStopping = true;
-  treeKill(p.pid);
+  // it seems like treeKill and p.kill() can no longer stop the functions process because only the father process gets killed, so the functions still remain up causing jest to hang up at the end,
+  // this is a workaround to kill all the process and make jest exit correctly
+  exec(
+    `ps -ef | grep "[f]unc start" | awk '{print $2}' | xargs -I{} kill -9 {}`
+  );
 };
 
 beforeAll(done => {
@@ -52,7 +57,10 @@ beforeAll(done => {
     .catch(_ => 0);
 });
 
-afterAll(() => spawnedFunc && stopFunc(spawnedFunc));
+afterAll(done => {
+  spawnedFunc && stopFunc(spawnedFunc);
+  done();
+});
 
 describe("Azure functions handler", () => {
   it("should handle a simple GET request", async () => {
