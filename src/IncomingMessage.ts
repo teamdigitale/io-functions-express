@@ -74,7 +74,8 @@ export default class IncomingMessage extends Readable {
       connection: createConnectionObject(context),
       context: sanitizeContext(context), // Specific to Azure Function
       headers: req.headers || {}, // Should always have a headers object
-      socket: { destroy: NOOP },
+      socket: { destroy: NOOP }, // we should not destroy the socket
+      destroy: NOOP, // we are not interested in new destroy implementation
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       url: (req as any).originalUrl
     });
